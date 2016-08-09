@@ -50,6 +50,15 @@ describe('aspnet - Empty Web Application', function() {
     for (var i = 0; i < files.length; i++) {
       util.filesCheck(files[i]);
     }
+
+    it('Dockerfile does not include SQLite', function() {
+      assert.noFileContent('emptyWebTest/Dockerfile', /RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev/);
+    });
+
+    it('Dockerfile does not contain migrations', function() {
+      assert.noFileContent('emptyWebTest/Dockerfile', /RUN \["dotnet", "ef", "database", "update"\]/);
+    });
+
   });
 
 });
@@ -119,7 +128,8 @@ describe('aspnet - Unit Test Application', function() {
   var files = [
     'unittestTest/.gitignore',
     'unittestTest/project.json',
-    'unittestTest/SampleTest.cs'
+    'unittestTest/Class1.cs',
+    'unittestTest/xunit.runner.json'
   ];
   describe('Checking files', function() {
     for (var i = 0; i < files.length; i++) {
@@ -127,52 +137,6 @@ describe('aspnet - Unit Test Application', function() {
     }
   });
 
-});
-
-/*
- * yo aspnet Web Application - Grunt option
- */
-describe('aspnet - Web Application w/grunt', function() {
-
-  util.goCreateApplicationWithOptions('web', 'gruntTest', 'bootstrap', {
-    grunt: 'grunt'
-  });
-
-  describe('Checking directories', function() {
-    it('Application directory created', function() {
-      assert.file('gruntTest/');
-    });
-
-    it('grunt file created', function() {
-      assert.file('gruntTest/Gruntfile.js');
-    });
-
-    it('gulpfile does NOT exist', function() {
-      assert.noFile('gruntTest/gulpfile.js');
-    });
-  });
-});
-
-/*
- * yo aspnet Web Application - No Grunt option
- */
-describe('aspnet - Web Application w/o grunt', function() {
-
-  util.goCreateApplication('web', 'gulpTest');
-
-  describe('Checking directories', function() {
-    it('Application directory created', function() {
-      assert.file('gulpTest/');
-    });
-
-    it('gulp file created', function() {
-      assert.file('gulpTest/gulpfile.js');
-    });
-
-    it('grunt file does NOT exist', function() {
-      assert.noFile('gulpTest/Gruntfile.js');
-    });
-  });
 });
 
 /*
@@ -256,9 +220,8 @@ describe('aspnet - Web Application (Bootstrap)', function() {
     'webTest/.gitignore',
     'webTest/appsettings.json',
     'webTest/bower.json',
+    'webTest/bundleconfig.json',
     'webTest/Dockerfile',
-    'webTest/gulpfile.js',
-    'webTest/package.json',
     'webTest/Program.cs',
     'webTest/project.json',
     'webTest/README.md',
@@ -335,6 +298,15 @@ describe('aspnet - Web Application (Bootstrap)', function() {
     it('bower.json name field is lower case', function() {
       assert.fileContent('webTest/bower.json', /"name": "webtest"/);
     });
+
+    it('Dockerfile includes SQLite', function() {
+      assert.fileContent('webTest/Dockerfile', /RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev/);
+    });
+
+    it('Dockerfile contains migrations', function() {
+      assert.fileContent('webTest/Dockerfile', /RUN \["dotnet", "ef", "database", "update"\]/);
+    });
+
   });
 
 });
@@ -424,9 +396,8 @@ describe('aspnet - Web Application (Semantic UI)', function() {
     'webTest/.gitignore',
     'webTest/appsettings.json',
     'webTest/bower.json',
+    'webTest/bundleconfig.json',
     'webTest/Dockerfile',
-    'webTest/gulpfile.js',
-    'webTest/package.json',
     'webTest/Program.cs',
     'webTest/project.json',
     'webTest/README.md',
@@ -505,6 +476,15 @@ describe('aspnet - Web Application (Semantic UI)', function() {
     it('bower.json name field is lower case', function() {
       assert.fileContent('webTest/bower.json', /"name": "webtest"/);
     });
+
+    it('Dockerfile includes SQLite', function() {
+      assert.fileContent('webTest/Dockerfile', /RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev/);
+    });
+
+    it('Dockerfile contains migrations', function() {
+      assert.fileContent('webTest/Dockerfile', /RUN \["dotnet", "ef", "database", "update"\]/);
+    });
+
   });
 
 
@@ -553,53 +533,6 @@ describe('aspnet - Web Application (Semantic UI)', function() {
     });
   });
 
-});
-
-
-/*
- * yo aspnet Web Application Basic - Grunt option
- */
-describe('aspnet - Web Application Basic w/grunt', function() {
-
-  util.goCreateApplicationWithOptions('webbasic', 'gruntTest', 'bootstrap', {
-    grunt: 'grunt'
-  });
-
-  describe('Checking directories', function() {
-    it('Application directory created', function() {
-      assert.file('gruntTest/');
-    });
-
-    it('grunt file created', function() {
-      assert.file('gruntTest/Gruntfile.js');
-    });
-
-    it('gulpfile does NOT exist', function() {
-      assert.noFile('gruntTest/gulpfile.js');
-    });
-  });
-});
-
-/*
- * yo aspnet Web Application Basic - No Grunt option
- */
-describe('aspnet - Web Application Basic w/o grunt', function() {
-
-  util.goCreateApplication('webbasic', 'gulpTest');
-
-  describe('Checking directories', function() {
-    it('Application directory created', function() {
-      assert.file('gulpTest/');
-    });
-
-    it('gulp file created', function() {
-      assert.file('gulpTest/gulpfile.js');
-    });
-
-    it('grunt file does NOT exist', function() {
-      assert.noFile('gulpTest/Gruntfile.js');
-    });
-  });
 });
 
 /*
@@ -658,10 +591,9 @@ describe('aspnet - Web Application Basic (Bootstrap)', function() {
     'webTest/.bowerrc',
     'webTest/.gitignore',
     'webTest/bower.json',
+    'webTest/bundleconfig.json',
     'webTest/appsettings.json',
     'webTest/Controllers/HomeController.cs',
-    'webTest/gulpfile.js',
-    'webTest/package.json',
     'webTest/Program.cs',
     'webTest/project.json',
     'webTest/Properties/launchSettings.json',
@@ -693,6 +625,15 @@ describe('aspnet - Web Application Basic (Bootstrap)', function() {
     it('bower.json name field is lower case', function() {
       assert.fileContent('webTest/bower.json', /"name": "webtest"/);
     });
+
+    it('Dockerfile does not include SQLite', function() {
+      assert.noFileContent('webTest/Dockerfile', /RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev/);
+    });
+
+    it('Dockerfile does not contain migrations', function() {
+      assert.noFileContent('webTest/Dockerfile', /RUN \["dotnet", "ef", "database", "update"\]/);
+    });
+
   });
 
 });
@@ -759,8 +700,6 @@ describe('aspnet - Web Application Basic (Semantic UI)', function() {
     'webTest/bower.json',
     'webTest/appsettings.json',
     'webTest/Controllers/HomeController.cs',
-    'webTest/gulpfile.js',
-    'webTest/package.json',
     'webTest/Program.cs',
     'webTest/project.json',
     'webTest/Properties/launchSettings.json',
@@ -795,6 +734,15 @@ describe('aspnet - Web Application Basic (Semantic UI)', function() {
     it('bower.json name field is lower case', function() {
       assert.fileContent('webTest/bower.json', /"name": "webtest"/);
     });
+
+    it('Dockerfile does not include SQLite', function() {
+      assert.noFileContent('webTest/Dockerfile', /RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev/);
+    });
+
+    it('Dockerfile does not contain migrations', function() {
+      assert.noFileContent('webTest/Dockerfile', /RUN \["dotnet", "ef", "database", "update"\]/);
+    });
+
   });
 
   describe('Checking file content for overrides', function() {
@@ -875,6 +823,15 @@ describe('aspnet - Web API Application', function() {
     for (var i = 0; i < files.length; i++) {
       util.filesCheck(files[i]);
     }
+
+    it('Dockerfile does not include SQLite', function() {
+      assert.noFileContent('webAPITest/Dockerfile', /RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev/);
+    });
+
+    it('Dockerfile does not contain migrations', function() {
+      assert.noFileContent('webAPITest/Dockerfile', /RUN \["dotnet", "ef", "database", "update"\]/);
+    });
+
   });
 
 });
@@ -894,7 +851,7 @@ describe('aspnet - Nancy Application', function() {
   });
 
 
-  var files = ['nancyTest/project.json', 'nancyTest/Startup.cs', 'nancyTest/HomeModule.cs'];
+  var files = ['nancyTest/project.json', 'nancyTest/Startup.cs', 'nancyTest/HomeModule.cs', 'nancyTest/Program.cs'];
   describe('Checking files', function() {
     for (var i = 0; i < files.length; i++) {
       util.filesCheck(files[i]);

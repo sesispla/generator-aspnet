@@ -10,12 +10,6 @@ var AspnetGenerator = yeoman.generators.Base.extend({
 
   constructor: function() {
     yeoman.generators.Base.apply(this, arguments);
-    // only implemented for web template
-    this.option('grunt', {
-      type: Boolean,
-      defaults: false,
-      desc: 'Use the Grunt JavaScript task runner instead of Gulp in web projects.'
-    });
 
     this.argument('type', { type: String, required: false, desc: 'the project type to create' });
     this.argument('applicationName', { type: String, required: false, desc: 'the name of the application' });
@@ -24,7 +18,7 @@ var AspnetGenerator = yeoman.generators.Base.extend({
 
 
   init: function() {
-    this.log(yosay('Welcome to the marvellous ASP.NET Core 1.0 generator!'));
+    this.log(yosay('Welcome to the marvellous ASP.NET Core generator!'));
     this.templatedata = {};
   },
 
@@ -115,8 +109,7 @@ var AspnetGenerator = yeoman.generators.Base.extend({
     this.templatedata.namespace = projectName(this.applicationName);
     this.templatedata.applicationname = this.applicationName;
     this.templatedata.guid = guid.v4();
-    this.templatedata.grunt = this.options.grunt || false;
-    this.templatedata.coreclr = this.options.coreclr || false;
+    this.templatedata.sqlite = (this.type === 'web') ? true : false;
     this.templatedata.ui = this.ui;
   },
 
@@ -208,19 +201,13 @@ var AspnetGenerator = yeoman.generators.Base.extend({
 
       case 'web':
         this.sourceRoot(path.join(__dirname, '../templates/projects/' + this.type));
-        // Grunt or Gulp
-        if (this.options.grunt) {
-          this.fs.copyTpl(this.templatePath('Gruntfile.js'), this.applicationName + '/Gruntfile.js', this.templatedata);
-        } else {
-          this.fs.copyTpl(this.templatePath('gulpfile.js'), this.applicationName + '/gulpfile.js', this.templatedata);
-        }
         // individual files (configs, etc)
         this.fs.copyTpl(this.sourceRoot() + '/../../Dockerfile.txt', this.applicationName + '/Dockerfile', this.templatedata);
         this.fs.copy(this.templatePath('.bowerrc'), this.applicationName + '/.bowerrc');
         this.fs.copy(this.sourceRoot() + '/../../gitignore.txt', this.applicationName + '/.gitignore');
         this.fs.copyTpl(this.templatePath('appsettings.json'), this.applicationName + '/appsettings.json', this.templatedata);
         this.fs.copyTpl(this.templatePath('bower.json'), this.applicationName + '/bower.json', this.templatedata);
-        this.fs.copyTpl(this.templatePath('package.json'), this.applicationName + '/package.json', this.templatedata);
+        this.fs.copy(this.templatePath('bundleconfig.json'), this.applicationName + '/bundleconfig.json');
         this.fs.copyTpl(this.templatePath('Program.cs'), this.applicationName + '/Program.cs', this.templatedata);
         this.fs.copyTpl(this.templatePath('project.json'), this.applicationName + '/project.json', this.templatedata);
         this.fs.copy(this.templatePath('README.md'), this.applicationName + '/README.md');
@@ -258,19 +245,13 @@ var AspnetGenerator = yeoman.generators.Base.extend({
         break;
       case 'webbasic':
         this.sourceRoot(path.join(__dirname, '../templates/projects/' + this.type));
-        // Grunt or Gulp
-        if (this.options.grunt) {
-          this.fs.copyTpl(this.templatePath('Gruntfile.js'), this.applicationName + '/Gruntfile.js', this.templatedata);
-        } else {
-          this.fs.copyTpl(this.templatePath('gulpfile.js'), this.applicationName + '/gulpfile.js', this.templatedata);
-        }
         // individual files (configs, etc)
         this.fs.copyTpl(this.sourceRoot() + '/../../Dockerfile.txt', this.applicationName + '/Dockerfile', this.templatedata);
         this.fs.copy(this.templatePath('.bowerrc'), this.applicationName + '/.bowerrc');
+        this.fs.copy(this.templatePath('bundleconfig.json'), this.applicationName + '/bundleconfig.json');
         this.fs.copy(this.sourceRoot() + '/../../gitignore.txt', this.applicationName + '/.gitignore');
         this.fs.copyTpl(this.templatePath('bower.json'), this.applicationName + '/bower.json', this.templatedata);
         this.fs.copyTpl(this.templatePath('appsettings.json'), this.applicationName + '/appsettings.json', this.templatedata);
-        this.fs.copyTpl(this.templatePath('package.json'), this.applicationName + '/package.json', this.templatedata);
         this.fs.copyTpl(this.templatePath('project.json'), this.applicationName + '/project.json', this.templatedata);
         this.fs.copyTpl(this.templatePath('Program.cs'), this.applicationName + '/Program.cs', this.templatedata);
         // Properties
@@ -301,7 +282,9 @@ var AspnetGenerator = yeoman.generators.Base.extend({
 
         this.fs.copyTpl(this.sourceRoot() + '/project.json', this.applicationName + '/project.json', this.templatedata);
 
-        this.template(this.sourceRoot() + '/homemodule.cs', this.applicationName + '/HomeModule.cs', this.templatedata);
+        this.template(this.sourceRoot() + '/HomeModule.cs', this.applicationName + '/HomeModule.cs', this.templatedata);
+
+        this.template(this.sourceRoot() + '/Program.cs', this.applicationName + '/Program.cs', this.templatedata);
 
         break;
       case 'consoleapp':
@@ -343,7 +326,7 @@ var AspnetGenerator = yeoman.generators.Base.extend({
     if(!this.options['skip-install'] && (this.type === 'web' || this.type === 'webbasic')) {
       process.chdir(this.applicationName);
       this.installDependencies({
-        npm: true,
+        npm: false,
         bower: true,
         callback: this._showUsageHints.bind(this)
       });
