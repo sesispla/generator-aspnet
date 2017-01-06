@@ -4,6 +4,8 @@
 ![Version](https://img.shields.io/npm/v/generator-aspnet.svg)
 ![Downloads per month](https://img.shields.io/npm/dm/generator-aspnet.svg)
 
+> NOTE: The content has been updated for .NET Core 1.1.0 (`project.json` based). For more info see https://github.com/OmniSharp/generator-aspnet/wiki/Version-info
+
 Yeoman generator for ASP.NET Core projects
 
 [![](https://cloud.githubusercontent.com/assets/14539/16569731/0590dada-423a-11e6-997c-1e1e20b1d37e.gif)](https://github.com/OmniSharp/generator-aspnet 'ASP.NET Core Generator')
@@ -33,13 +35,19 @@ Also see [ASP NET Community Standup - June 21st, 2016 - Mads Visits](https://www
 Full, template based projects available in generator:
 
 - Empty Web Application
+- Empty Web Application (F#)
 - Console Application
+- Console Application (F#)
 - Web Application
 - Web Application Basic [without Membership and Authorization]
+- Web Application Basic [without Membership and Authorization] \(F#)
 - Web API Application
+- Web API Application (F#)
 - Nancy ASP.NET Application
 - Class Library
+- Class Library (F#)
 - Unit Test project (xUnit.net)
+- Unit Test project (xUnit.net) (F#)
 
 The Empty Web Application, Console Application, Web Application, Web Application Basic (a.k.a. Web Application No Auth), Web API Application and Class Library are based on the templates introduced with Visual Studio 2015. They are available and maintained in the [ASP.NET Templates project](https://github.com/aspnet/Templates).
 
@@ -50,11 +58,13 @@ The Empty Web Application, Console Application, Web Application, Web Application
 The Nancy project is based on framework's "Hello World" template:
 [Nancy Getting Started: Introduction](https://github.com/NancyFx/Nancy/wiki/Introduction)
 
-The [Docker](https://www.docker.com/) support with `Dockerfile` configuration files is based on the official [Docker image for ASP.NET 5](https://github.com/aspnet/aspnet-docker)
+The [Docker](https://www.docker.com/) support with `Dockerfile` configuration files is based on the official [Docker image for ASP.NET Core](https://github.com/aspnet/aspnet-docker)
 
 The Unit test project uses [xUnit: a free, open source, community-focused unit testing tool for the .NET Framework](https://xunit.github.io/)
 
-The templates that use client side libraries are calling `bower install` script to install Bower managed dependencies. You can skip installation process by passign `--skip-install` option to generator, e.g. `yo aspnet --skip-install`. This should allow better experience when `Development` has been enabled.
+The F# Templates are based on [Core F# Templates](https://github.com/odytrice/core-fsharp-templates) projects. They were translated into F# from the original [ASP.NET Templates](https://github.com/aspnet/Templates) 
+
+The templates that use client-side libraries are calling the `bower install` script to install Bower managed dependencies. You can skip the installation process by passing the `--skip-install` option to the generator, e.g. `yo aspnet --skip-install`. This should allow for a better experience when `Development` has been enabled.
 
 ## Command line automation
 
@@ -72,6 +82,12 @@ The valid project types are:
 - `nancy` for Nancy ASP.NET Application
 - `classlibrary` for Class Library
 - `unittest` Unit Test project (xUnit.net)
+- `fsharp_emptyweb` for F# Empty Web Application
+- `fsharp_console` for F# Console Application
+- `fsharp_lib` for F# Class Library
+- `fsharp_webapi` for F# Web API Application
+- `fsharp_webbasic` for F# Web Application Basic
+- `fsharp_test` for F# Unit Test project (xUnit.net)
 
 The valid UI framework types are:
 
